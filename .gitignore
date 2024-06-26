@@ -7,6 +7,8 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+artifacts/
+SourceGradientDirection/
 .Python
 build/
 develop-eggs/
