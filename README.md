@@ -39,3 +39,8 @@
   - **src/DirectionPrediction.py**
   - **src/logger.py**
   - **src/customexception.py**
+
+## Command to use the model 
+-  **import tensorflow**
+-  **from tensorflow.keras.models import load_model**
+-  **model = load_model("DL_Models/model.json")**
