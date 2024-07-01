@@ -44,3 +44,18 @@
 -  **import tensorflow**
 -  **from tensorflow.keras.models import load_model**
 -  **model = load_model("DL_Models/model.json")**
+-  **prediction = model.predict(test_data)**
+
+## Format of the Data to be Given to the Model 
+
+- **numpy array of n rows and 8 columns **
+- **Where the order of 8 columns are**
+  - ** Reciever X location ** 
+  - ** Reciever Y location ** 
+  - ** Reciever Z location ** 
+  - ** Magnetic Component along X direction measured by reciever **
+  - ** Magnetic Component along Y direction measured by reciever **
+  - ** Magnetic Component along Z direction measured by reciever ** 
+  - ** Reciever Roll Angle **
+  - ** Reciever Pitch Angle **
+  - ** Reciever Yaw Angle **
