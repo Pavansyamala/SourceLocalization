@@ -49,7 +49,7 @@
 ## Format of the Data to be Given to the Model 
 
 - **numpy array of n rows and 9 columns**
-- **Where the order of 8 columns are**
+- **Where the order of 9 columns are**
   - **Reciever X location** 
   - **Reciever Y location** 
   - **Reciever Z location** 
