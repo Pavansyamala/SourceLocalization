@@ -5,9 +5,8 @@ from src.logger import LocationsReceiver
 from src.customexception import TransLoc
 import time 
 
-
-def setup_data(tran_ori , rec_ori , pr, pt , m_vec = np.array([1, 0, 0])):
-    num_points = 1000
+# TRIED WITH m = 1 , 2 , 3 , 4 , 200 , 450
+def setup_data(tran_ori , rec_ori , pr, pt , m_vec = np.array([450, 0, 0])):
     B_scalar = 0
     B_vectors = [] 
 
@@ -94,4 +93,6 @@ if __name__ == '__main__':
     data = pd.DataFrame(data_dict)
     end = time.time()
     print("Total Time Taken : " , end-start)
-    data.to_csv("artifacts/data.csv")
+    data.to_csv("artifacts/data450.csv") 
+
+
