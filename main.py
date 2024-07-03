@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 import time 
 
-# TRIED WITH m = 1 , 2 , 3 , 4 , 200 , 450
-def setup_data(tran_ori , rec_ori , pr, pt , m_vec = np.array([450, 0, 0])):
+# TRIED WITH m = 1 , 2 , 3 , 4 , 200 , 450 
+def setup_data(tran_ori , rec_ori , pr, pt , m_vec = np.array([1, 0, 0])):
     B_scalar = 0
     B_vectors = [] 
 
