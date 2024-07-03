@@ -1,8 +1,5 @@
 import numpy as np 
-import pandas as pd 
-from src.DirectionPredictor import Orientations 
-from src.logger import LocationsReceiver
-from src.customexception import TransLoc
+import pandas as pd
 import time 
 
 # TRIED WITH m = 1 , 2 , 3 , 4 , 200 , 450
@@ -29,8 +26,8 @@ def setup_data(tran_ori , rec_ori , pr, pt , m_vec = np.array([450, 0, 0])):
     ])
 
     B_vectors.append(get_arva_data(pr, pt, R_t_to_i, R_r_to_i, m_vec))
-    B_scalar = np.linalg.norm(B_vectors[0])
-    return  B_vectors, B_scalar, R_t_to_i, R_r_to_i
+    return  B_vectors
+    #, R_t_to_i, R_r_to_i
 
 def get_arva_data(pr, pt, R_t_to_i, R_r_to_i, m_vec):
     R_i_to_t = np.transpose(R_t_to_i)
@@ -49,50 +46,101 @@ def get_arva_data(pr, pt, R_t_to_i, R_r_to_i, m_vec):
     Hb = np.dot(R_i_to_r, H)
     return Hb 
 
+def orientations():
+
+    roll = [-90 , 90]      
+    pitch = [-30 , 30]
+    yaw = [-180 , 180] 
+
+    roll_angles = np.linspace(roll[0] , roll[1] , 5)
+    pitch_angles = np.linspace(roll[0] , roll[1] , 5)
+    yaw_angles = np.linspace(roll[0] , roll[1] , 5) 
+
+    orientations = [] 
+
+    for roll in roll_angles:
+        for pitch in pitch_angles:
+            for yaw in yaw_angles: 
+                orientations.append([roll, pitch, yaw])  
+    
+    return orientations 
+
+
+def transmitterLocations():
+
+    return np.random.randint(low=1 , high= 10 , size=3)
+
+
+def receiversLocations(trans_loc):
+    max_x , min_x = trans_loc[0]+60 , trans_loc[0]-60
+    max_y  , min_y= trans_loc[1]+60 , trans_loc[1]-60
+    max_z , min_z = trans_loc[2]+60 , trans_loc[2]-60   
+
+    locations = []
+
+    x_range = np.linspace(min_x , max_x , 11)
+    y_range = np.linspace(min_y , max_y , 11)
+    z_range = np.linspace(min_z , max_z , 11)
+
+    
+    for i in x_range:
+        for j in y_range:
+            for k in z_range:
+                locations.append(np.array([i,j,k])) 
+    
+    return locations 
+
 if __name__ == '__main__':
     start = time.time()
     
-    orientation = Orientations()
-    rec_loct = LocationsReceiver()
-    tra_loct = TransLoc() 
+    filename = input("Enter the Name with wich you want to save the data generated : ")
+    orientation = orientations()
 
-    rec_loc = rec_loct.locations
-    tran_loc= tra_loct.trans_loc 
+    tran_loc = transmitterLocations()
+    rec_loc = receiversLocations(tran_loc)  
 
-    reciever_orientations = orientation.reciever_orientations
-    transmitter_orientations = orientation.transmitter_orientations 
+    reciever_orientations = orientations()
+    transmitter_orientations = orientations() 
 
-    pos_t , pos_r ,  bstr_vec , bstr_sca , ori_tra , ori_rec = [] , [] , [] , [] , [] , [] 
+    pos_t , pos_r ,  bstr_vec , ori_rec = [] , [] , [] , []
 
-    t_count = 1 
-    for pt in tran_loc:
-        count = 1
-        for pr in rec_loc :
-            for i in transmitter_orientations:
-                for j in reciever_orientations:
-                    b_vec , b_sca , _ , _= setup_data(i , j , pr , pt) 
-                    pos_t.append(pt)
-                    pos_r.append(pr)
-                    bstr_vec.append(b_vec)
-                    bstr_sca.append(b_sca)
-                    ori_tra.append(i)
-                    ori_rec.append(j)
-            print("Transmitter Location Count = {} , Receiver Location Count  = {} ".format(t_count , count))
-            count += 1
-        t_count   += 1
-    
+    for pr in rec_loc :
+        for i in transmitter_orientations:
+            for j in reciever_orientations:
+
+                b_vec = setup_data(i , j , pr , tran_loc) 
+                pos_t.append(tran_loc)
+                pos_r.append(pr)
+                bstr_vec.append(b_vec)
+                ori_rec.append(j) 
+
+    pos_t = np.array(pos_t)
+    pos_r = np.array(pos_r)
+    ori_rec = np.array(ori_rec) 
+    bstr_vec = np.array(bstr_vec) 
+
+    pos_trans_wrt_rec = pos_t - pos_r 
+
     data_dict = {
-        "Transmitter Location" : pos_t , 
-        "Receiver Location" : pos_r , 
-        "Magnetic_Vector" : bstr_vec ,
-        "Magnetic_Strength" : bstr_sca,
-        "Transmitter Orientation" : ori_tra , 
-        "Reciever Orientation" : ori_rec
+        "target_x" : pos_t[:,0] , 
+        "target_y" : pos_t[:,1] , 
+        "target_z" : pos_t[:,2] , 
+        "rec_x" : pos_r[:,0] , 
+        "rec_y" : pos_r[:,0] ,
+        "rec_z" : pos_r[:,0] ,
+        "roll_r" : ori_rec[:,0] , 
+        "pitch_r" : ori_rec[:,1] ,
+        "yaw_r" : ori_rec[:,2] , 
+        "mag_x" : bstr_vec[:,0] ,
+        "mag_y" : bstr_vec[:,1] , 
+        "mag_z" : bstr_vec[:,2] ,
     }
 
     data = pd.DataFrame(data_dict)
+    path_todata = f"artifacts/{filename}.csv"
+    data.to_csv(path_todata) 
+
     end = time.time()
     print("Total Time Taken : " , end-start)
-    data.to_csv("artifacts/data450.csv") 
 
 
