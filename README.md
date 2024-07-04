@@ -28,7 +28,7 @@
      ```
 
 5. **About Data Generation**
-   - **Before Excution of the following Remeber one thing Just Change the File Path According to Your System**
+   - **Before Excution of the following Remeber one thing Just Change the File Path According to Your Syste in datageneration.py file line number : 160 , variable name : path_todata**
    - Run the datageneration.py file to create the dataset:
      ```bash
      python datageneration.py
