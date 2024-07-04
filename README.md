@@ -30,15 +30,9 @@
 5. **Execute the Code:**
    - Run the main.py file to execute the code:
      ```bash
-     python main.py
+     python datageneration.py
      ```
 
-## Project Hierarchy
-
-- **main.py**
-  - **src/DirectionPrediction.py**
-  - **src/logger.py**
-  - **src/customexception.py**
 
 ## Command to use the model 
 -  **import tensorflow**
