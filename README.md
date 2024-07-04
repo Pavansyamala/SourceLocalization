@@ -35,10 +35,12 @@
 
 
 ## Command to use the model 
+```bash
 -  **import tensorflow**
 -  **from tensorflow.keras.models import load_model**
 -  **model = load_model("DL_Models/acc_model")**
 -  **prediction = model.predict(test_data)**
+```
 
 ## Format of the Data to be Given to the Model 
 
