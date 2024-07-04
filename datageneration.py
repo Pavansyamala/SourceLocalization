@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 from scipy.spatial.transform import Rotation as R
 import time 
+from datetime import datetime
 
-# TRIED WITH m = 1 , 2 , 3 , 4 , 200 , 450 
 def setup_data(tran_ori , rec_ori , pr, pt , m_vec = np.array([1, 0, 0])):
     B_scalar = 0
     B_vectors = [] 
@@ -79,9 +79,9 @@ def receiversLocations(trans_loc):
 
     locations = []
 
-    x_range = np.linspace(min_x , max_x , 11)
-    y_range = np.linspace(min_y , max_y , 11)
-    z_range = np.linspace(min_z , max_z , 11)
+    x_range = np.linspace(min_x , max_x , 10)
+    y_range = np.linspace(min_y , max_y , 10)
+    z_range = np.linspace(min_z , max_z , 10)
 
     
     for i in x_range:
@@ -100,6 +100,9 @@ def transformation_receiverfor(pos , ori):
     return np.array(transformed) 
 
 if __name__ == '__main__':
+
+    print("Starting Time of Excution : ", datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
+
     start = time.time()
     
     filename = input("Enter the Name with wich you want to save the data generated : ")
@@ -113,6 +116,8 @@ if __name__ == '__main__':
 
     pos_t , pos_r ,  bstr_vec , ori_rec = [] , [] , [] , []
 
+    total_rec_loc = len(rec_loc) 
+    print("Total receiver locations remaining : ", total_rec_loc)
     for pr in rec_loc :
         for i in transmitter_orientations:
             for j in reciever_orientations:
@@ -122,8 +127,8 @@ if __name__ == '__main__':
                 pos_r.append(pr)
                 bstr_vec.append(b_vec)
                 ori_rec.append(j) 
-
-                print("working on ")
+        total_rec_loc -= 1 
+        print("Total Receiver locarions remaining: ", total_rec_loc)
 
     pos_t = np.array(pos_t)
     pos_r = np.array(pos_r)
@@ -141,19 +146,23 @@ if __name__ == '__main__':
         "roll_r" : ori_rec[:,0] , 
         "pitch_r" : ori_rec[:,1] ,
         "yaw_r" : ori_rec[:,2] , 
-        "mag_x" : bstr_vec[:,0] ,
-        "mag_y" : bstr_vec[:,1] , 
-        "mag_z" : bstr_vec[:,2] ,
+        "mag_x" : bstr_vec[:,:,0].reshape(1,-1)[0] ,
+        "mag_y" : bstr_vec[:,:,1].reshape(1,-1)[0] , 
+        "mag_z" : bstr_vec[:,:,2].reshape(1,-1)[0] ,
         "target_x" : pos_trans_wrt_rec[:,0] , 
         "target_y" : pos_trans_wrt_rec[:,1] , 
-        "target_z" : pos_trans_wrt_rec[:,2] , 
+        "target_z" : pos_trans_wrt_rec[:,2], 
     }
 
+    print(data_dict)
+
     data = pd.DataFrame(data_dict)
-    path_todata = f"artifacts/{filename}.csv"
-    data.to_csv(path_todata) 
+    path_todata = f"D:/DataIITM/{filename}.csv"
+    data.to_csv(path_todata , index=False) 
 
     end = time.time()
-    print("Total Time Taken : " , end-start)
 
+    print("Ending Time of Excution : ", datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
+
+    print("Total Time Taken : " , end-start) 
 
