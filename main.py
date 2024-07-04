@@ -1,5 +1,6 @@
 import numpy as np 
 import pandas as pd
+from scipy.spatial.transform import Rotation as R
 import time 
 
 # TRIED WITH m = 1 , 2 , 3 , 4 , 200 , 450 
@@ -90,6 +91,14 @@ def receiversLocations(trans_loc):
     
     return locations 
 
+def transformation_receiverfor(pos , ori):
+    transformed = [] 
+    for pos , ori in zip(pos, ori):
+        rotation_matrix = R.from_euler("xyz" , ori)
+        pos_trans = rotation_matrix.inv().apply(pos)
+        transformed.append(pos_trans)
+    return np.array(transformed) 
+
 if __name__ == '__main__':
     start = time.time()
     
@@ -114,17 +123,18 @@ if __name__ == '__main__':
                 bstr_vec.append(b_vec)
                 ori_rec.append(j) 
 
+                print("working on ")
+
     pos_t = np.array(pos_t)
     pos_r = np.array(pos_r)
     ori_rec = np.array(ori_rec) 
     bstr_vec = np.array(bstr_vec) 
 
     pos_trans_wrt_rec = pos_t - pos_r 
+    pos_trans_wrt_rec = transformation_receiverfor(pos_trans_wrt_rec , ori_rec) 
+
 
     data_dict = {
-        "target_x" : pos_t[:,0] , 
-        "target_y" : pos_t[:,1] , 
-        "target_z" : pos_t[:,2] , 
         "rec_x" : pos_r[:,0] , 
         "rec_y" : pos_r[:,0] ,
         "rec_z" : pos_r[:,0] ,
@@ -134,6 +144,9 @@ if __name__ == '__main__':
         "mag_x" : bstr_vec[:,0] ,
         "mag_y" : bstr_vec[:,1] , 
         "mag_z" : bstr_vec[:,2] ,
+        "target_x" : pos_trans_wrt_rec[:,0] , 
+        "target_y" : pos_trans_wrt_rec[:,1] , 
+        "target_z" : pos_trans_wrt_rec[:,2] , 
     }
 
     data = pd.DataFrame(data_dict)
