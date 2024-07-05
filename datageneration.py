@@ -136,7 +136,7 @@ if __name__ == '__main__':
     bstr_vec = np.array(bstr_vec) 
 
     pos_trans_wrt_rec = pos_t - pos_r 
-    pos_trans_wrt_rec = transformation_receiverfor(pos_trans_wrt_rec , ori_rec) 
+    # pos_trans_wrt_rec = transformation_receiverfor(pos_trans_wrt_rec , ori_rec) 
 
 
     data_dict = {
