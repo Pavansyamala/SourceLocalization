@@ -69,13 +69,13 @@ def orientations():
 
 def transmitterLocations():
 
-    return np.random.randint(low=1 , high= 10 , size=3)
+    return np.random.randint(low=1 , high= 10 , size=(10,3))
 
 
-def receiversLocations(trans_loc):
-    max_x , min_x = trans_loc[0]+60 , trans_loc[0]-60
-    max_y  , min_y= trans_loc[1]+60 , trans_loc[1]-60
-    max_z , min_z = trans_loc[2]+60 , trans_loc[2]-60   
+def receiversLocations():
+    max_x , min_x = -25 , 25
+    max_y  , min_y= -25 , 25
+    max_z , min_z = -25 , 25
 
     locations = []
 
@@ -109,26 +109,31 @@ if __name__ == '__main__':
     orientation = orientations()
 
     tran_loc = transmitterLocations()
-    rec_loc = receiversLocations(tran_loc)  
+    rec_loc = receiversLocations()  
 
     reciever_orientations = orientations()
     transmitter_orientations = orientations() 
 
     pos_t , pos_r ,  bstr_vec , ori_rec = [] , [] , [] , []
 
-    total_rec_loc = len(rec_loc) 
-    print("Total receiver locations remaining : ", total_rec_loc)
-    for pr in rec_loc :
-        for i in transmitter_orientations:
-            for j in reciever_orientations:
+    count = 1 
+    for pt in tran_loc:
+        print("Transmitter Location : ",count)
+        total_rec_loc = len(rec_loc) 
+        print("Total receiver locations remaining : ", total_rec_loc)
+        for pr in rec_loc :
+            for i in transmitter_orientations:
+                for j in reciever_orientations:
 
-                b_vec = setup_data(i , j , pr , tran_loc) 
-                pos_t.append(tran_loc)
-                pos_r.append(pr)
-                bstr_vec.append(b_vec)
-                ori_rec.append(j) 
-        total_rec_loc -= 1 
-        print("Total Receiver locarions remaining: ", total_rec_loc)
+                    b_vec = setup_data(i , j , pr , pt) 
+                    pos_t.append(pt)
+                    pos_r.append(pr)
+                    bstr_vec.append(b_vec)
+                    ori_rec.append(j) 
+            total_rec_loc -= 1 
+            print("Total Receiver locarions remaining: ", total_rec_loc)
+        count += 1 
+
 
     pos_t = np.array(pos_t)
     pos_r = np.array(pos_r)
