@@ -93,9 +93,9 @@ def receiversLocations(trans_loc):
 
 def transformation_receiverfor(pos , ori):
     transformed = [] 
-    for pos , ori in zip(pos, ori):
-        rotation_matrix = R.from_euler("xyz" , ori)
-        pos_trans = rotation_matrix.inv().apply(pos)
+    for pos_ , ori_ in zip(pos, ori):
+        rotation_matrix = R.from_euler("xyz" , ori_)
+        pos_trans = rotation_matrix.inv().apply(pos_)
         transformed.append(pos_trans)
     return np.array(transformed) 
 
