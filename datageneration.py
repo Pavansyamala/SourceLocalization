@@ -124,7 +124,6 @@ if __name__ == '__main__':
         for pr in rec_loc :
             for i in transmitter_orientations:
                 for j in reciever_orientations:
-
                     b_vec = setup_data(i , j , pr , pt) 
                     pos_t.append(pt)
                     pos_r.append(pr)
@@ -132,7 +131,7 @@ if __name__ == '__main__':
                     ori_rec.append(j) 
             total_rec_loc -= 1 
             print("Total Receiver locarions remaining: ", total_rec_loc)
-        count += 1 
+        count += 1            
 
 
     pos_t = np.array(pos_t)
@@ -154,6 +153,9 @@ if __name__ == '__main__':
         "mag_x" : bstr_vec[:,:,0].reshape(1,-1)[0] ,
         "mag_y" : bstr_vec[:,:,1].reshape(1,-1)[0] , 
         "mag_z" : bstr_vec[:,:,2].reshape(1,-1)[0] ,
+        "tra_x" : pos_t[:,0],
+        "tra_y" : pos_t[:,1],
+        "tra_z" : pos_t[:,2],
         "target_x" : pos_trans_wrt_rec[:,0] , 
         "target_y" : pos_trans_wrt_rec[:,1] , 
         "target_z" : pos_trans_wrt_rec[:,2], 
