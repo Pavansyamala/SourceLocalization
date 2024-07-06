@@ -5,8 +5,7 @@ import time
 from datetime import datetime
 
 def setup_data(tran_ori , rec_ori , pr, pt , m_vec = np.array([1, 0, 0])):
-    B_scalar = 0
-    B_vectors = [] 
+    # B_vectors = []
 
     roll_t = (np.pi/180)*tran_ori[0]  # Roll angle of transmitter 
     pitch_t = (np.pi/180)*tran_ori[1]  # Pitch angle of transmitter 
@@ -19,15 +18,15 @@ def setup_data(tran_ori , rec_ori , pr, pt , m_vec = np.array([1, 0, 0])):
 
     roll_r = (np.pi/180)*rec_ori[0]  # Roll angle of Reciever 
     pitch_r = (np.pi/180)*rec_ori[1]  # Pitch angle of Reciever
-    yaw_r = (np.pi/180)*rec_ori[2]   # Yaw angle of Reciever
+    yaw_r = (np.pi/180)*rec_ori[2]   # Yaw angle of Reciever    
     R_r_to_i = np.array([
         [np.cos(pitch_r)*np.cos(yaw_r), np.sin(roll_r)*np.sin(pitch_r)*np.cos(yaw_r) - np.cos(roll_r)*np.sin(yaw_r), np.cos(roll_r)*np.sin(pitch_r)*np.cos(yaw_r) + np.sin(roll_r)*np.sin(yaw_r)],
         [np.cos(pitch_r)*np.sin(yaw_r), np.sin(roll_r)*np.sin(pitch_r)*np.sin(yaw_r) + np.cos(roll_r)*np.cos(yaw_r), np.cos(roll_r)*np.sin(pitch_r)*np.sin(yaw_r) - np.sin(roll_r)*np.cos(yaw_r)],
         [-np.sin(pitch_r), np.sin(roll_r)*np.cos(pitch_r), np.cos(roll_r)*np.cos(pitch_r)]
     ])
 
-    B_vectors.append(get_arva_data(pr, pt, R_t_to_i, R_r_to_i, m_vec))
-    return  B_vectors
+    # B_vectors.append(get_arva_data(pr, pt, R_t_to_i, R_r_to_i, m_vec))
+    return  get_arva_data(pr, pt, R_t_to_i, R_r_to_i, m_vec)
     #, R_t_to_i, R_r_to_i
 
 def get_arva_data(pr, pt, R_t_to_i, R_r_to_i, m_vec):
@@ -61,8 +60,8 @@ def orientations():
         for pitch in pitch_angles:
             for yaw in yaw_angles: 
                 orientations.append([roll, pitch, yaw])  
-    
     return orientations 
+
 
 
 def transmitterLocations():
@@ -149,9 +148,9 @@ if __name__ == '__main__':
         "roll_r" : ori_rec[:,0] , 
         "pitch_r" : ori_rec[:,1] ,
         "yaw_r" : ori_rec[:,2] , 
-        "mag_x" : bstr_vec[:,:,0].reshape(1,-1)[0] ,
-        "mag_y" : bstr_vec[:,:,1].reshape(1,-1)[0] , 
-        "mag_z" : bstr_vec[:,:,2].reshape(1,-1)[0] ,
+        "mag_x" : bstr_vec[:,0] ,
+        "mag_y" : bstr_vec[:,1], 
+        "mag_z" : bstr_vec[:,2] ,
         "target_x" : pos_trans_wrt_rec[:,0] , 
         "target_y" : pos_trans_wrt_rec[:,1] , 
         "target_z" : pos_trans_wrt_rec[:,2], 
