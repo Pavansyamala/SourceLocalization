@@ -34,13 +34,11 @@ def get_arva_data(pr, pt, R_t_to_i, R_r_to_i, m_vec):
     R_i_to_t = np.transpose(R_t_to_i)
     r = pr - pt
     r = np.dot(R_i_to_t, r)
-    A = np.array([[2*r[0]**2 - r[1]**2 - r[2]**2, 3*r[0]*r[1], 3*r[0]*r[2]],
-                  [3*r[0]*r[1], 2*r[1]**2 - r[0]**2 - r[2]**2, 3*r[1]*r[2]],
-                  [3*r[0]*r[2], 3*r[1]*r[2], 2*r[2]**2 - r[0]**2 - r[1]**2]])
+    A = np.array([2*r[0]**2 - r[1]**2 - r[2]**2 , 3*r[0]*r[1] ,3*r[0]*r[2] ]).reshape(-1,1) 
     Am = np.dot(R_t_to_i, A)
-    Am_x = A[0, 0]*m_vec[0] + A[0, 1]*m_vec[1] + A[0, 2]*m_vec[2]
-    Am_y = A[1, 0]*m_vec[0] + A[1, 1]*m_vec[1] + A[1, 2]*m_vec[2]
-    Am_z = A[2, 0]*m_vec[0] + A[2, 1]*m_vec[1] + A[2, 2]*m_vec[2]
+    Am_x = A[0, 0] # *m_vec[0] + A[0, 1]*m_vec[1] + A[0, 2]*m_vec[2]
+    Am_y = A[1, 0] # *m_vec[0] + A[1, 1]*m_vec[1] + A[1, 2]*m_vec[2]
+    Am_z = A[2, 0] # *m_vec[0] + A[2, 1]*m_vec[1] + A[2, 2]*m_vec[2]
     rd = np.linalg.norm(r)
     H = np.array([(1/(4*np.pi*rd**5))*Am_x, (1/(4*np.pi*rd**5))*Am_y, (1/(4*np.pi*rd**5))*Am_z])
     R_i_to_r = np.transpose(R_r_to_i)
@@ -170,4 +168,3 @@ if __name__ == '__main__':
     print("Ending Time of Excution : ", datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
 
     print("Total Time Taken : " , end-start) 
-
