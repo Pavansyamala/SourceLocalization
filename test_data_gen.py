@@ -35,9 +35,9 @@ def get_arva_data(pr, pt, R_t_to_i, R_r_to_i, m_vec):
     r = np.dot(R_i_to_t, r)
     A = np.array([2*r[0]**2 - r[1]**2 - r[2]**2 , 3*r[0]*r[1] ,3*r[0]*r[2] ]).reshape(-1,1) 
     Am = np.dot(R_t_to_i, A)
-    Am_x = A[0, 0] # *m_vec[0] + A[0, 1]*m_vec[1] + A[0, 2]*m_vec[2]
-    Am_y = A[1, 0] # *m_vec[0] + A[1, 1]*m_vec[1] + A[1, 2]*m_vec[2]
-    Am_z = A[2, 0] # *m_vec[0] + A[2, 1]*m_vec[1] + A[2, 2]*m_vec[2]
+    Am_x = A[0, 0] 
+    Am_y = A[1, 0] 
+    Am_z = A[2, 0] 
     rd = np.linalg.norm(r)
     H = np.array([(1/(4*np.pi*rd**5))*Am_x, (1/(4*np.pi*rd**5))*Am_y, (1/(4*np.pi*rd**5))*Am_z])
     R_i_to_r = np.transpose(R_r_to_i)
@@ -66,27 +66,25 @@ def orientations():
 
 def transmitterLocations():
 
-    return np.random.randint(low=1 , high= 10 , size=(2,3))
+    return np.random.randint(low=1 , high= 10 , size=(10,3))
 
 
 def receiversLocations():
-    max_x , min_x = -25 , 25
-    max_y  , min_y= -25 , 25
-    max_z , min_z = -25 , 25
+    max_x, min_x = 25, -25
+    max_y, min_y = 25, -25
+    max_z, min_z = 25, -25
 
-    locations = []
+    # Create coordinate grids
+    x_vals = np.linspace(min_x, max_x, 21)
+    y_vals = np.linspace(min_y, max_y, 21)
+    z_vals = np.linspace(min_z, max_z, 21)
 
-    x_range = np.linspace(min_x , max_x , 10)
-    y_range = np.linspace(min_y , max_y , 10)
-    z_range = np.linspace(min_z , max_z , 10)
+    # Generate all combinations of coordinates
+    xx, yy, zz = np.meshgrid(x_vals, y_vals, z_vals, indexing='ij')
+    locations = np.column_stack((xx.ravel(), yy.ravel(), zz.ravel()))
 
-    
-    for i in x_range:
-        for j in y_range:
-            for k in z_range:
-                locations.append(np.array([i,j,k])) 
-    
-    return locations 
+    return locations
+
 
 def transformation_receiverfor(pos , ori):
     transformed = [] 
@@ -94,7 +92,9 @@ def transformation_receiverfor(pos , ori):
         rotation_matrix = R.from_euler("xyz" , ori_)
         pos_trans = rotation_matrix.inv().apply(pos_)
         transformed.append(pos_trans)
-    return np.array(transformed) 
+    return np.array(transformed)  
+
+
 
 if __name__ == '__main__':
 
@@ -103,21 +103,19 @@ if __name__ == '__main__':
     start = time.time()
     
     filename = input("Enter the Name with wich you want to save the data generated : ")
-    orientation = orientations()
 
     tran_loc = transmitterLocations()
     rec_loc = receiversLocations()  
 
     reciever_orientations = orientations()
-    transmitter_orientations = orientations() 
+    transmitter_orientations = [[45 , 45 , 45]]
 
-    pos_t , pos_r ,  bstr_vec , ori_rec = [] , [] , [] , []
+    pos_t , pos_r ,  bstr_vec , ori_rec , ori_tar = [] , [] , [] , [] , []
 
     count = 1 
     for pt in tran_loc:
-        print("Transmitter Location : ",count)
-        total_rec_loc = len(rec_loc) 
-        print("Total receiver locations remaining : ", total_rec_loc)
+        print("Transmitter Location : ", count ) 
+        tot_rec_loc = len(rec_loc)
         for pr in rec_loc :
             for i in transmitter_orientations:
                 for j in reciever_orientations:
@@ -127,36 +125,41 @@ if __name__ == '__main__':
                     pos_r.append(pr)
                     bstr_vec.append(b_vec)
                     ori_rec.append(j) 
-            total_rec_loc -= 1 
-            print("Total Receiver locarions remaining: ", total_rec_loc)
-        count += 1 
+                    ori_tar.append(i)
+
+            print("Rec Loc : " , tot_rec_loc)
+            tot_rec_loc -= 1 
+        count += 1  
 
 
     pos_t = np.array(pos_t)
     pos_r = np.array(pos_r)
     ori_rec = np.array(ori_rec) 
+    ori_tar = np.array(ori_tar) 
     bstr_vec = np.array(bstr_vec) 
 
-    pos_trans_wrt_rec = pos_t - pos_r 
-    # pos_trans_wrt_rec = transformation_receiverfor(pos_trans_wrt_rec , ori_rec) 
+    pos_trans_wrt_rec = pos_t - pos_r  
 
 
     data_dict = {
         "rec_x" : pos_r[:,0] , 
-        "rec_y" : pos_r[:,0] ,
-        "rec_z" : pos_r[:,0] ,
+        "rec_y" : pos_r[:,1] ,
+        "rec_z" : pos_r[:,2] ,
         "roll_r" : ori_rec[:,0] , 
         "pitch_r" : ori_rec[:,1] ,
         "yaw_r" : ori_rec[:,2] , 
         "mag_x" : bstr_vec[:,0] ,
         "mag_y" : bstr_vec[:,1], 
         "mag_z" : bstr_vec[:,2] ,
-        "tra_x" : pos_t[:,0],
-        "tra_y" : pos_t[:,1],
-        "tra_z" : pos_t[:,2],
+        "tar_x" : pos_t[:,0],
+        "tar_y" : pos_t[:,1],
+        "tar_z" : pos_t[:,2],
         "target_x" : pos_trans_wrt_rec[:,0] , 
         "target_y" : pos_trans_wrt_rec[:,1] , 
         "target_z" : pos_trans_wrt_rec[:,2], 
+        "tar_roll" : ori_tar[:,0],
+        "tar_pitch" : ori_tar[:,1],
+        "tar_yaw" : ori_tar[:,2]
     }
 
     print(data_dict)
